@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CS‑style Buy Menu UI</title>
+    
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #050509;
+        color: #f5c25c;
+        font-family: "Segoe UI", Tahoma, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        transition: color 0.3s ease;
+      }
+
+      
+      body.ct-faction {
+        color: #5c8cb8;
+      }
+
+      body.t-faction {
+        color: #d4a43a;
+      }
+
+      
+      .panel {
+        width: 900px;
+        background-color: #0d0d12;
+        padding: 1rem;
+        border-radius: 6px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        position: relative;
+      }
+
+      
+      .faction-toggle {
+        position: absolute;
+        top: -1.2rem;
+        right: -1.9rem;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        background-color: #5c8cb8;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        padding: 8px;
+        z-index: 10;
+      }
+
+      .faction-toggle:hover {
+        transform: scale(1.05);
+        border-color: rgba(255, 255, 255, 0.4);
+      }
+
+      .faction-toggle img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+
+      .faction-toggle.terrorist {
+        background-color: #d4a43a;
+      }
+
+      .faction-toggle.counter-terrorist {
+        background-color: #5c8cb8;
+      }
+
+      
+      .top-bar {
+        
+        display: none;
+      }
+
+      .top-bar span.time {
+        font-weight: 700;
+      }
+
+      
+      .spin-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+      }
+
+      .spin-btn {
+        padding: 0.8rem 1rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border: 2px solid #444;
+        border-radius: 4px;
+        background: linear-gradient(135deg, #2a2a30 0%, #1a1a20 100%);
+        color: #ffffff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .spin-btn:hover {
+        background: linear-gradient(135deg, #3a3a40 0%, #2a2a30 100%);
+        border-color: #666;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      }
+
+      .spin-btn:active {
+        transform: translateY(0);
+      }
+
+      .spin-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      body.ct-faction .spin-btn:hover {
+        border-color: #5c8cb8;
+        box-shadow: 0 4px 12px rgba(92, 140, 184, 0.4);
+      }
+
+      body.t-faction .spin-btn:hover {
+        border-color: #d4a43a;
+        box-shadow: 0 4px 12px rgba(212, 164, 58, 0.4);
+      }
+
+      
+      .item.spinning {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-color: #fff;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        transition: all 0.1s ease;
+      }
+
+      body.ct-faction .item.spinning {
+        background-color: rgba(92, 140, 184, 0.3);
+        border-color: #5c8cb8;
+        box-shadow: 0 0 20px rgba(92, 140, 184, 0.8);
+      }
+
+      body.t-faction .item.spinning {
+        background-color: rgba(212, 164, 58, 0.3);
+        border-color: #d4a43a;
+        box-shadow: 0 0 20px rgba(212, 164, 58, 0.8);
+      }
+
+      
+      .columns {
+        display: flex;
+        
+        gap: 1rem;
+      }
+
+      .column {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      
+      .column.equipment {
+        flex: 1;
+      }
+      .column.pistols {
+        flex: 1;
+      }
+      .column.mid-tier {
+        flex: 1.1;
+      }
+      .column.rifles {
+        flex: 1.3;
+      }
+      .column.grenades {
+        flex: 1;
+      }
+
+      .column h3 {
+        font-size: 1.3rem;
+        color: #ffffff;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        text-align: center;
+      }
+
+      
+      .item {
+        position: relative;
+        background-color: #1a1a20;
+        border: 1px solid #26262d;
+        border-radius: 4px;
+        padding: 0.5rem;
+        margin-bottom: 0.7rem;
+        min-height: 100px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      
+      .item.disabled {
+        background-color: #2a2a30;
+        border-color: #33333a;
+        color: #777777;
+      }
+
+      .item-number {
+        position: absolute;
+        top: 4px;
+        left: 4px;
+        font-size: 0.7rem;
+        color: #666666;
+      }
+
+      .item .icon {
+        text-align: center;
+        font-size: 1.8rem;
+        margin-top: 1rem;
+        color: inherit;
+      }
+
+      .item .icon img {
+        max-width: 80px;
+        max-height: 50px;
+        width: auto;
+        height: auto;
+        transition: filter 0.3s ease;
+      }
+
+      
+      body.ct-faction .item .icon img {
+        filter: drop-shadow(0 0 8px rgba(92, 140, 184, 0.8)) 
+                invert(48%) sepia(79%) saturate(434%) hue-rotate(175deg) brightness(110%) contrast(86%);
+      }
+
+      body.t-faction .item .icon img {
+        filter: drop-shadow(0 0 8px rgba(212, 164, 58, 0.8))
+                invert(70%) sepia(58%) saturate(456%) hue-rotate(358deg) brightness(220%) contrast(87%);
+      }
+
+      .column.mid-tier .item .icon img {
+        max-width: 100px;
+        max-height: 65px;
+      }
+
+      .column.rifles .item .icon img {
+        max-width: 135px;
+        max-height: 85px;
+      }
+
+      .item .name {
+        text-align: center;
+        font-size: 0.85rem;
+        color: inherit;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .item .price {
+        
+        display: none;
+      }
+
+      
+      .bullets {
+        
+        display: none;
+      }
+
+      .bullet {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        margin: 0 1px;
+      }
+
+      
+      .dropped-weapons-panel {
+        width: 900px;
+        background-color: #0d0d12;
+        padding: 1rem;
+        border-radius: 6px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        margin-top: 1.5rem;
+      }
+
+      .dropped-weapons-grid {
+        display: flex;
+        gap: 1rem;
+      }
+
+      
+      .dropped-column {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      
+      .dropped-column.equipment-spacer {
+        flex: 1;
+      }
+
+      .dropped-column.pistols {
+        flex: 1;
+      }
+
+      .dropped-column.mid-tier {
+        flex: 1.1;
+      }
+
+      .dropped-column.rifles {
+        flex: 1.3;
+      }
+
+      
+      .dropped-column.grenades-spacer {
+        flex: 1;
+      }
+
+      .dropped-item {
+        background-color: #1a1a20;
+        border: 1px solid #26262d;
+        border-radius: 4px;
+        padding: 0.4rem 0.6rem;
+        height: 45px;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+
+      .dropped-item:hover {
+        background-color: #252530;
+      }
+
+      .dropped-item .icon {
+        flex-shrink: 0;
+        width: 35px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .dropped-item .icon img {
+        max-width: 100%;
+        max-height: 100%;
+        transition: filter 0.3s ease;
+      }
+
+      body.ct-faction .dropped-item .icon img {
+        filter: drop-shadow(0 0 4px rgba(92, 140, 184, 0.6)) 
+                invert(48%) sepia(79%) saturate(434%) hue-rotate(175deg) brightness(120%) contrast(86%);
+      }
+
+      body.t-faction .dropped-item .icon img {
+        filter: drop-shadow(0 0 4px rgba(212, 164, 58, 0.6))
+                invert(70%) sepia(58%) saturate(456%) hue-rotate(358deg) brightness(200%) contrast(87%);
+      }
+
+      .dropped-item .name {
+        font-size: 0.8rem;
+        color: inherit;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .c4 {
+        background-color: #1a1a20;
+        color: #f5c25c;
+        border-radius: 4px;
+        padding: 0.5rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: fit-content;
+        font-size: 0.9rem;
+      }
+
+      .dropped {
+        color: #444444;
+        font-size: 2.5rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        text-align: center;
+        opacity: 0.08;
+        user-select: none;
+      }
+
+      
+      .item.placeholder {
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="panel">
+      
+      <button class="faction-toggle" id="factionToggle" onclick="toggleFaction()">
+        <img src="icons/fac/ct_logo_1c.svg" alt="CT" id="factionIcon">
+      </button>
+      
+      <div class="top-bar">
+        <div class="money">$3650</div>
+        <div class="timer">Buy Time Remaining <span class="time">00:19</span></div>
+        <div class="next-round">Next Round Minimum: $6,650</div>
+      </div>
+      
+      <div class="columns">
+        
+        <div class="column equipment">
+          <h3>Equipment</h3>
+          <div class="item">
+            <div class="item-number">1</div>
+            <div class="icon"><img src="icons/equipment/kevlar.svg" alt="Kevlar Vest"></div>
+            <div class="name">Kevlar Vest</div>
+            <div class="bullets"></div>
+            <div class="price">$650</div>
+          </div>
+          <div class="item">
+            <div class="item-number">2</div>
+            <div class="icon"><img src="icons/equipment/armor_helmet.svg" alt="Kevlar & Helmet"></div>
+            <div class="name">Kevlar &amp; Helmet</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#5ab9ea"></div>
+              <div class="bullet" style="background:#b56576"></div>
+              <div class="bullet" style="background:#eab05f"></div>
+              <div class="bullet" style="background:#7cc74b"></div>
+              <div class="bullet" style="background:#e36414"></div>
+            </div>
+            <div class="price">$1000</div>
+          </div>
+          <div class="item">
+            <div class="item-number">3</div>
+            <div class="icon"><img src="icons/equipment/taser.svg" alt="Zeus x27"></div>
+            <div class="name">Zeus x27</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#5ab9ea"></div>
+            </div>
+            <div class="price">$200</div>
+          </div>
+          
+          
+          <button class="spin-btn pistol-spin" onclick="startPistolSpin()" style="margin-top: 2.1rem; margin-bottom: 0.7rem;">🎲 Pistol Round</button>
+          <button class="spin-btn normal-spin" onclick="startNormalSpin()">🎲 Buy Round</button>
+        </div>
+        
+        <div class="column pistols">
+          <h3>Pistols</h3>
+          <div class="item" data-weapon="glock" data-category="pistols" data-icon="icons/equipment/glock.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">1</div>
+            <div class="icon"><img src="icons/equipment/glock.svg" alt="Glock-18"></div>
+            <div class="name">Glock‑18</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#5ab9ea"></div>
+              <div class="bullet" style="background:#b56576"></div>
+              <div class="bullet" style="background:#eab05f"></div>
+              <div class="bullet" style="background:#7cc74b"></div>
+              <div class="bullet" style="background:#e36414"></div>
+            </div>
+            <div class="price">$200</div>
+          </div>
+          <div class="item" data-weapon="p250" data-category="pistols" data-icon="icons/equipment/p250.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">2</div>
+            <div class="icon"><img src="icons/equipment/p250.svg" alt="P250"></div>
+            <div class="name">P250</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#e36414"></div>
+            </div>
+            <div class="price">$300</div>
+          </div>
+          <div class="item" data-weapon="tec9" data-category="pistols" data-icon="icons/equipment/tec9.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">3</div>
+            <div class="icon"><img src="icons/equipment/tec9.svg" alt="Tec-9"></div>
+            <div class="name">Tec‑9</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#7cc74b"></div>
+            </div>
+            <div class="price">$500</div>
+          </div>
+          <div class="item" data-weapon="revolver" data-category="pistols" data-icon="icons/equipment/revolver.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">4</div>
+            <div class="icon"><img src="icons/equipment/revolver.svg" alt="R8 Revolver"></div>
+            <div class="name">R8 Revolver</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#b56576"></div>
+            </div>
+            <div class="price">$600</div>
+          </div>
+          <div class="item" data-weapon="deagle" data-category="pistols" data-icon="icons/equipment/deagle.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">5</div>
+            <div class="icon"><img src="icons/equipment/deagle.svg" alt="Desert Eagle"></div>
+            <div class="name">Desert Eagle</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#eab05f"></div>
+            </div>
+            <div class="price">$700</div>
+          </div>
+        </div>
+        
+        <div class="column mid-tier">
+          <h3>Mid‑Tier</h3>
+          <div class="item" data-weapon="xm1014" data-category="mid-tier" data-icon="icons/equipment/xm1014.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">1</div>
+            <div class="icon"><img src="icons/equipment/xm1014.svg" alt="XM1014"></div>
+            <div class="name">XM1014</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#5ab9ea"></div>
+            </div>
+            <div class="price">$2000</div>
+          </div>
+          <div class="item" data-weapon="nova" data-category="mid-tier" data-icon="icons/equipment/nova.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">2</div>
+            <div class="icon"><img src="icons/equipment/nova.svg" alt="Nova"></div>
+            <div class="name">Nova</div>
+            <div class="bullets"></div>
+            <div class="price">$1050</div>
+          </div>
+          <div class="item" data-weapon="mac10" data-category="mid-tier" data-icon="icons/equipment/mac10.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">3</div>
+            <div class="icon"><img src="icons/equipment/mac10.svg" alt="MAC-10"></div>
+            <div class="name">MAC‑10</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#5ab9ea"></div>
+            </div>
+            <div class="price">$1050</div>
+          </div>
+          <div class="item" data-weapon="negev" data-category="mid-tier" data-icon="icons/equipment/negev.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">4</div>
+            <div class="icon"><img src="icons/equipment/negev.svg" alt="Negev"></div>
+            <div class="name">Negev</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#5ab9ea"></div>
+            </div>
+            <div class="price">$1700</div>
+          </div>
+          <div class="item" data-weapon="p90" data-category="mid-tier" data-icon="icons/equipment/p90.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">5</div>
+            <div class="icon"><img src="icons/equipment/p90.svg" alt="P90"></div>
+            <div class="name">P90</div>
+            <div class="bullets"></div>
+            <div class="price">$2350</div>
+          </div>
+        </div>
+        
+        <div class="column rifles">
+          <h3>Rifles</h3>
+          <div class="item" data-weapon="ak47" data-category="rifles" data-icon="icons/equipment/ak47.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">1</div>
+            <div class="icon"><img src="icons/equipment/ak47.svg" alt="AK-47"></div>
+            <div class="name">AK‑47</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#b56576"></div>
+            </div>
+            <div class="price">$2700</div>
+          </div>
+          <div class="item" data-weapon="galilar" data-category="rifles" data-icon="icons/equipment/galilar.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">2</div>
+            <div class="icon"><img src="icons/equipment/galilar.svg" alt="Galil AR"></div>
+            <div class="name">Galil AR</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#eab05f"></div>
+            </div>
+            <div class="price">$1800</div>
+          </div>
+          <div class="item" data-weapon="sg556" data-category="rifles" data-icon="icons/equipment/sg556.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">3</div>
+            <div class="icon"><img src="icons/equipment/sg556.svg" alt="SG 553"></div>
+            <div class="name">SG 553</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#b56576"></div>
+            </div>
+            <div class="price">$3000</div>
+          </div>
+          <div class="item" data-weapon="awp" data-category="rifles" data-icon="icons/equipment/awp.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">4</div>
+            <div class="icon"><img src="icons/equipment/awp.svg" alt="AWP"></div>
+            <div class="name">AWP</div>
+            <div class="bullets"></div>
+            <div class="price">$4750</div>
+          </div>
+          <div class="item" data-weapon="ssg08" data-category="rifles" data-icon="icons/equipment/ssg08.svg" onclick="toggleWeapon(this)">
+            <div class="item-number">5</div>
+            <div class="icon"><img src="icons/equipment/ssg08.svg" alt="SSG 08"></div>
+            <div class="name">SSG 08</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#b56576"></div>
+            </div>
+            <div class="price">$1700</div>
+          </div>
+        </div>
+        
+        <div class="column grenades">
+          <h3>Grenades</h3>
+          <div class="item">
+            <div class="item-number">1</div>
+            <div class="icon"><img src="icons/equipment/flashbang.svg" alt="Flashbang"></div>
+            <div class="name">Flashbang</div>
+            <div class="bullets"></div>
+            <div class="price">$200</div>
+          </div>
+          <div class="item">
+            <div class="item-number">2</div>
+            <div class="icon"><img src="icons/equipment/smokegrenade.svg" alt="Smoke Grenade"></div>
+            <div class="name">Smoke Grenade</div>
+            <div class="bullets"></div>
+            <div class="price">$300</div>
+          </div>
+          <div class="item">
+            <div class="item-number">3</div>
+            <div class="icon"><img src="icons/equipment/hegrenade.svg" alt="HE Grenade"></div>
+            <div class="name">HE Grenade</div>
+            <div class="bullets">
+              <div class="bullet" style="background:#eab05f"></div>
+            </div>
+            <div class="price">$300</div>
+          </div>
+          <div class="item">
+            <div class="item-number">4</div>
+            <div class="icon"><img src="icons/equipment/molotov.svg" alt="Molotov"></div>
+            <div class="name">Molotov</div>
+            <div class="bullets"></div>
+            <div class="price">$400</div>
+          </div>
+          <div class="item">
+            <div class="item-number">5</div>
+            <div class="icon"><img src="icons/equipment/decoy.svg" alt="Decoy"></div>
+            <div class="name">Decoy</div>
+            <div class="bullets"></div>
+            <div class="price">$50</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="dropped-weapons-panel">
+      <div class="dropped-weapons-grid">
+        
+      </div>
+    </div>
+
+    <script>
+      let currentFaction = 'ct'; // Start with Counter-Terrorist
+      let equippedWeapons = new Set(); // Track equipped weapons
+      let weaponSlots = { ct: {}, t: {} }; // Track which weapon is in each slot per faction
+
+      function loadSavedData() {
+        const savedFaction = localStorage.getItem('cs2_faction');
+        
+        if (savedFaction) {
+          currentFaction = savedFaction;
+
+          if (currentFaction === 't') {
+            document.getElementById('factionIcon').src = 'icons/fac/t_logo_1c.svg';
+            document.getElementById('factionIcon').alt = 'T';
+            document.getElementById('factionToggle').classList.remove('counter-terrorist');
+            document.getElementById('factionToggle').classList.add('terrorist');
+            document.body.classList.remove('ct-faction');
+            document.body.classList.add('t-faction');
+          }
+        }
+
+        const savedEquipped = localStorage.getItem(`cs2_equipped_${currentFaction}`);
+        if (savedEquipped) {
+          equippedWeapons = new Set(JSON.parse(savedEquipped));
+        }
+
+        const savedSlotsCT = localStorage.getItem('cs2_slots_ct');
+        const savedSlotsT = localStorage.getItem('cs2_slots_t');
+        if (savedSlotsCT) {
+          weaponSlots.ct = JSON.parse(savedSlotsCT);
+        }
+        if (savedSlotsT) {
+          weaponSlots.t = JSON.parse(savedSlotsT);
+        }
+      }
+
+      function saveData() {
+        localStorage.setItem('cs2_faction', currentFaction);
+        localStorage.setItem(`cs2_equipped_${currentFaction}`, JSON.stringify([...equippedWeapons]));
+        localStorage.setItem(`cs2_slots_${currentFaction}`, JSON.stringify(weaponSlots[currentFaction]));
+      }
+
+      function resetLoadout() {
+        localStorage.removeItem('cs2_faction');
+        localStorage.removeItem('cs2_equipped_ct');
+        localStorage.removeItem('cs2_equipped_t');
+        localStorage.removeItem('cs2_slots_ct');
+        localStorage.removeItem('cs2_slots_t');
+        equippedWeapons.clear();
+        weaponSlots = { ct: {}, t: {} };
+        currentFaction = 'ct';
+        location.reload();
+      }
+
+      const weaponData = {
+
+        'glock': { name: 'Glock-18', icon: 'icons/equipment/glock.svg', category: 'pistols', factions: ['t'] },
+        'usp': { name: 'USP-S', icon: 'icons/equipment/usp_silencer.svg', category: 'pistols', factions: ['ct'] },
+        'p2000': { name: 'P2000', icon: 'icons/equipment/hkp2000.svg', category: 'pistols', factions: ['ct'] },
+        'p250': { name: 'P250', icon: 'icons/equipment/p250.svg', category: 'pistols', factions: ['ct', 't'] },
+        'tec9': { name: 'Tec-9', icon: 'icons/equipment/tec9.svg', category: 'pistols', factions: ['t'] },
+        'fiveseven': { name: 'Five-SeveN', icon: 'icons/equipment/fiveseven.svg', category: 'pistols', factions: ['ct'] },
+        'cz75': { name: 'CZ75-Auto', icon: 'icons/equipment/cz75a.svg', category: 'pistols', factions: ['ct', 't'] },
+        'deagle': { name: 'Desert Eagle', icon: 'icons/equipment/deagle.svg', category: 'pistols', factions: ['ct', 't'] },
+        'revolver': { name: 'R8 Revolver', icon: 'icons/equipment/revolver.svg', category: 'pistols', factions: ['ct', 't'] },
+
+        'mac10': { name: 'MAC-10', icon: 'icons/equipment/mac10.svg', category: 'mid-tier', factions: ['t'] },
+        'mp9': { name: 'MP9', icon: 'icons/equipment/mp9.svg', category: 'mid-tier', factions: ['ct'] },
+        'mp7': { name: 'MP7', icon: 'icons/equipment/mp7.svg', category: 'mid-tier', factions: ['ct', 't'] },
+        'ump45': { name: 'UMP-45', icon: 'icons/equipment/ump45.svg', category: 'mid-tier', factions: ['ct', 't'] },
+        'p90': { name: 'P90', icon: 'icons/equipment/p90.svg', category: 'mid-tier', factions: ['ct', 't'] },
+        'bizon': { name: 'PP-Bizon', icon: 'icons/equipment/bizon.svg', category: 'mid-tier', factions: ['ct', 't'] },
+        'mp5': { name: 'MP5-SD', icon: 'icons/equipment/mp5sd.svg', category: 'mid-tier', factions: ['ct', 't'] },
+        'nova': { name: 'Nova', icon: 'icons/equipment/nova.svg', category: 'mid-tier', factions: ['ct', 't'] },
+        'xm1014': { name: 'XM1014', icon: 'icons/equipment/xm1014.svg', category: 'mid-tier', factions: ['ct', 't'] },
+        'sawedoff': { name: 'Sawed-Off', icon: 'icons/equipment/sawedoff.svg', category: 'mid-tier', factions: ['t'] },
+        'mag7': { name: 'MAG-7', icon: 'icons/equipment/mag7.svg', category: 'mid-tier', factions: ['ct'] },
+        'negev': { name: 'Negev', icon: 'icons/equipment/negev.svg', category: 'mid-tier', factions: ['ct', 't'] },
+        'm249': { name: 'M249', icon: 'icons/equipment/m249.svg', category: 'mid-tier', factions: ['ct', 't'] },
+
+        'ak47': { name: 'AK-47', icon: 'icons/equipment/ak47.svg', category: 'rifles', factions: ['t'] },
+        'galilar': { name: 'Galil AR', icon: 'icons/equipment/galilar.svg', category: 'rifles', factions: ['t'] },
+        'sg556': { name: 'SG 553', icon: 'icons/equipment/sg556.svg', category: 'rifles', factions: ['t'] },
+        'm4a4': { name: 'M4A4', icon: 'icons/equipment/m4a1.svg', category: 'rifles', factions: ['ct'] },
+        'm4a1s': { name: 'M4A1-S', icon: 'icons/equipment/m4a1_silencer.svg', category: 'rifles', factions: ['ct'] },
+        'famas': { name: 'FAMAS', icon: 'icons/equipment/famas.svg', category: 'rifles', factions: ['ct'] },
+        'aug': { name: 'AUG', icon: 'icons/equipment/aug.svg', category: 'rifles', factions: ['ct'] },
+        'awp': { name: 'AWP', icon: 'icons/equipment/awp.svg', category: 'rifles', factions: ['ct', 't'] },
+        'ssg08': { name: 'SSG 08', icon: 'icons/equipment/ssg08.svg', category: 'rifles', factions: ['ct', 't'] },
+        'scar20': { name: 'SCAR-20', icon: 'icons/equipment/scar20.svg', category: 'rifles', factions: ['ct'] },
+        'g3sg1': { name: 'G3SG1', icon: 'icons/equipment/g3sg1.svg', category: 'rifles', factions: ['t'] },
+
+        'flashbang': { name: 'Flashbang', icon: 'icons/equipment/flashbang.svg', category: 'grenades', factions: ['ct', 't'] },
+        'smoke': { name: 'Smoke Grenade', icon: 'icons/equipment/smokegrenade.svg', category: 'grenades', factions: ['ct', 't'] },
+        'hegrenade': { name: 'HE Grenade', icon: 'icons/equipment/hegrenade.svg', category: 'grenades', factions: ['ct', 't'] },
+        'molotov': { name: 'Molotov', icon: 'icons/equipment/molotov.svg', category: 'grenades', factions: ['t'] },
+        'incendiary': { name: 'Incendiary Grenade', icon: 'icons/equipment/incgrenade.svg', category: 'grenades', factions: ['ct'] },
+        'decoy': { name: 'Decoy', icon: 'icons/equipment/decoy.svg', category: 'grenades', factions: ['ct', 't'] }
+      };
+
+      document.body.classList.add('ct-faction');
+
+      function toggleFaction() {
+        const button = document.getElementById('factionToggle');
+        const icon = document.getElementById('factionIcon');
+        
+        if (currentFaction === 'ct') {
+
+          currentFaction = 't';
+          icon.src = 'icons/fac/t_logo_1c.svg';
+          icon.alt = 'T';
+          button.classList.remove('counter-terrorist');
+          button.classList.add('terrorist');
+          document.body.classList.remove('ct-faction');
+          document.body.classList.add('t-faction');
+        } else {
+
+          currentFaction = 'ct';
+          icon.src = 'icons/fac/ct_logo_1c.svg';
+          icon.alt = 'CT';
+          button.classList.remove('terrorist');
+          button.classList.add('counter-terrorist');
+          document.body.classList.remove('t-faction');
+          document.body.classList.add('ct-faction');
+        }
+
+        localStorage.setItem('cs2_faction', currentFaction);
+
+        const savedEquipped = localStorage.getItem(`cs2_equipped_${currentFaction}`);
+        if (savedEquipped) {
+          equippedWeapons = new Set(JSON.parse(savedEquipped));
+        } else {
+          equippedWeapons.clear();
+        }
+
+        rebuildWeaponGrid();
+        updateDroppedWeapons();
+      }
+
+      function rebuildWeaponGrid() {
+        const categories = ['pistols', 'mid-tier', 'rifles', 'grenades'];
+        
+        categories.forEach(category => {
+          const column = document.querySelector(`.column.${category}`);
+          if (!column) return;
+
+          const h3 = column.querySelector('h3');
+          column.innerHTML = '';
+          if (h3) column.appendChild(h3);
+
+          const availableWeapons = Object.entries(weaponData)
+            .filter(([id, data]) => data.category === category && data.factions.includes(currentFaction))
+            .slice(0, 5); // Max 5 slots per category
+
+          availableWeapons.forEach(([id, data], index) => {
+            const slotKey = `${category}-${index}`;
+            const isStarterPistol = (category === 'pistols' && index === 0);
+
+            let weaponId = id;
+            let weaponInfo = data;
+            if (weaponSlots[currentFaction][slotKey]) {
+              weaponId = weaponSlots[currentFaction][slotKey];
+              weaponInfo = weaponData[weaponId];
+            }
+            
+            const item = document.createElement('div');
+            item.className = 'item';
+            if (isStarterPistol) {
+              item.classList.add('locked');
+            }
+            item.dataset.weapon = weaponId;
+            item.dataset.category = category;
+            item.dataset.icon = weaponInfo.icon;
+            item.dataset.slotIndex = index;
+            item.dataset.slotKey = slotKey;
+            item.dataset.locked = isStarterPistol;
+
+
+            if (isStarterPistol && currentFaction === 'ct') {
+              item.addEventListener('dragover', handleDragOver);
+              item.addEventListener('drop', handleDrop);
+              item.addEventListener('dragleave', handleDragLeave);
+            } else if (!isStarterPistol) {
+              item.addEventListener('dragover', handleDragOver);
+              item.addEventListener('drop', handleDrop);
+              item.addEventListener('dragleave', handleDragLeave);
+              item.addEventListener('click', () => toggleWeapon(item));
+            }
+
+            
+            item.innerHTML = `
+              <div class="item-number">${index + 1}</div>
+              <div class="icon"><img src="${weaponInfo.icon}" alt="${weaponInfo.name}"></div>
+              <div class="name">${weaponInfo.name}</div>
+              <div class="bullets"></div>
+              <div class="price">$0</div>
+            `;
+            
+            column.appendChild(item);
+          });
+
+          const placeholderCount = 5 - availableWeapons.length;
+          for (let i = 0; i < placeholderCount; i++) {
+            const placeholder = document.createElement('div');
+            placeholder.className = 'item placeholder';
+            column.appendChild(placeholder);
+          }
+        });
+      }
+
+      function handleDragStart(e) {
+        if (isSpinning) {
+          e.preventDefault();
+          return false;
+        }
+        
+        e.dataTransfer.effectAllowed = 'move';
+        
+        const weaponElement = e.target.closest('[data-weapon]');
+        if (weaponElement) {
+          const weaponId = weaponElement.dataset.weapon;
+          console.log('Drag started:', weaponId);
+          e.dataTransfer.setData('text/plain', weaponId);
+          weaponElement.style.opacity = '0.5';
+        }
+      }      function handleDragEnd(e) {
+        const weaponElement = e.target.closest('[data-weapon]');
+        if (weaponElement) {
+          weaponElement.style.opacity = '1';
+        }
+      }
+
+      function handleDragOver(e) {
+        if (e.preventDefault) {
+          e.preventDefault();
+        }
+        e.dataTransfer.dropEffect = 'move';
+
+        if (e.currentTarget.classList.contains('item')) {
+          e.currentTarget.style.backgroundColor = '#252530';
+        }
+        
+        return false;
+      }
+
+      function handleDragLeave(e) {
+        if (e.currentTarget.classList.contains('item')) {
+          e.currentTarget.style.backgroundColor = '';
+        }
+      }
+
+      function handleDrop(e) {
+        if (isSpinning) {
+          e.preventDefault();
+          return false;
+        }
+        
+        e.preventDefault();
+        if (e.stopPropagation) {
+          e.stopPropagation();
+        }
+        
+        e.currentTarget.style.backgroundColor = '';
+        
+        const weaponId = e.dataTransfer.getData('text/plain');
+        const targetSlot = e.currentTarget;
+        
+        console.log('Drop - weaponId:', weaponId, 'targetSlot weapon:', targetSlot.dataset.weapon, 'category:', targetSlot.dataset.category);
+
+        if (targetSlot.dataset.locked === 'true' && currentFaction === 'ct') {
+          if (weaponId !== 'usp' && weaponId !== 'p2000') {
+            console.log('CT starter pistol slot only accepts USP-S or P2000');
+            return false;
+          }
+        } else if (targetSlot.dataset.locked === 'true') {
+
+          console.log('Cannot drop on locked slot');
+          return false;
+        }
+        
+        if (!weaponId || !targetSlot.dataset.weapon) {
+          console.log('Missing weaponId or targetSlot.dataset.weapon');
+          return false;
+        }
+
+        const weaponCategory = weaponData[weaponId].category;
+        const targetCategory = targetSlot.dataset.category;
+        
+        console.log('weaponCategory:', weaponCategory, 'targetCategory:', targetCategory);
+        
+        if (weaponCategory !== targetCategory) {
+          console.log('Category mismatch!');
+          return false;
+        }
+
+        const oldWeaponId = targetSlot.dataset.weapon;
+        if (equippedWeapons.has(oldWeaponId)) {
+          equippedWeapons.delete(oldWeaponId);
+        }
+
+        targetSlot.dataset.weapon = weaponId;
+        const weaponData_item = weaponData[weaponId];
+        targetSlot.querySelector('.icon img').src = weaponData_item.icon;
+        targetSlot.querySelector('.name').textContent = weaponData_item.name;
+
+        const slotKey = targetSlot.dataset.slotKey;
+        weaponSlots[currentFaction][slotKey] = weaponId;
+
+        console.log('Equipping weapon:', weaponId);
+        equippedWeapons.add(weaponId);
+        saveData();
+        updateDroppedWeapons();
+        
+        return false;
+      }
+
+      function toggleWeapon(element) {
+        if (isSpinning) return;
+        
+        const weaponId = element.dataset.weapon;
+        
+        if (equippedWeapons.has(weaponId)) {
+
+          equippedWeapons.delete(weaponId);
+          element.style.opacity = '1';
+          saveData();
+          updateDroppedWeapons();
+        }
+
+      }
+
+      function updateDroppedWeapons() {
+        const grid = document.querySelector('.dropped-weapons-grid');
+
+        const weaponsInTopGrid = new Set();
+        document.querySelectorAll('.item[data-weapon]').forEach(item => {
+          weaponsInTopGrid.add(item.dataset.weapon);
+        });
+
+        const weapons = {
+          pistols: [],
+          'mid-tier': [],
+          rifles: [],
+          grenades: []
+        };
+
+        Object.entries(weaponData).forEach(([id, data]) => {
+          if (data.factions.includes(currentFaction) && !weaponsInTopGrid.has(id) && !equippedWeapons.has(id)) {
+            weapons[data.category].push({
+              id: id,
+              name: data.name,
+              icon: data.icon
+            });
+          }
+        });
+
+        let html = '';
+
+        html += '<div class="dropped-column equipment-spacer"></div>';
+
+        html += '<div class="dropped-column pistols">';
+        weapons.pistols.forEach(weapon => {
+          html += `
+            <div class="dropped-item" data-weapon="${weapon.id}" draggable="true" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
+              <div class="icon"><img src="${weapon.icon}" alt="${weapon.name}"></div>
+              <div class="name">${weapon.name}</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+
+        html += '<div class="dropped-column mid-tier">';
+        weapons['mid-tier'].forEach(weapon => {
+          html += `
+            <div class="dropped-item" data-weapon="${weapon.id}" draggable="true" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
+              <div class="icon"><img src="${weapon.icon}" alt="${weapon.name}"></div>
+              <div class="name">${weapon.name}</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+
+        html += '<div class="dropped-column rifles">';
+        weapons.rifles.forEach(weapon => {
+          html += `
+            <div class="dropped-item" data-weapon="${weapon.id}" draggable="true" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
+              <div class="icon"><img src="${weapon.icon}" alt="${weapon.name}"></div>
+              <div class="name">${weapon.name}</div>
+            </div>
+          `;
+        });
+        html += '</div>';
+
+        html += '<div class="dropped-column grenades-spacer"></div>';
+        
+        grid.innerHTML = html;
+      }
+
+      function pickupWeapon(weaponId) {
+
+        const weaponItem = document.querySelector(`.item[data-weapon="${weaponId}"]`);
+        if (weaponItem) {
+          toggleWeapon(weaponItem);
+        }
+      }
+
+      let isSpinning = false;
+
+      function startPistolSpin() {
+        if (isSpinning) return;
+        spinWeapons(['pistols']);
+      }
+
+      function startNormalSpin() {
+        if (isSpinning) return;
+        spinWeapons(['mid-tier', 'rifles']);
+      }
+
+      function spinWeapons(categories) {
+        isSpinning = true;
+
+        document.querySelectorAll('.spin-btn').forEach(btn => btn.disabled = true);
+
+        const availableSlots = [];
+        categories.forEach(category => {
+          const column = document.querySelector(`.column.${category}`);
+          if (column) {
+
+            if (category === 'pistols') {
+              column.querySelectorAll('.item:not(.placeholder)').forEach(slot => {
+                availableSlots.push(slot);
+              });
+            } else {
+              column.querySelectorAll('.item:not(.placeholder):not(.locked)').forEach(slot => {
+                availableSlots.push(slot);
+              });
+            }
+          }
+        });
+        
+        console.log('Available slots for spinning:', availableSlots.length);
+        
+        if (availableSlots.length === 0) {
+          isSpinning = false;
+          document.querySelectorAll('.spin-btn').forEach(btn => btn.disabled = false);
+          return;
+        }
+
+        const totalDuration = 3000 + Math.random() * 3000;
+        const startTime = Date.now();
+        let currentSlot = null;
+        let tickCount = 0;
+
+        function tick() {
+          const elapsed = Date.now() - startTime;
+          const progress = elapsed / totalDuration;
+
+          if (currentSlot) {
+            currentSlot.classList.remove('spinning');
+          }
+
+          if (elapsed >= totalDuration) {
+
+            const finalSlot = availableSlots[Math.floor(Math.random() * availableSlots.length)];
+            finalSlot.classList.add('spinning');
+            
+            console.log('Spin complete! Final slot:', finalSlot.dataset.weapon);
+
+            let flashCount = 0;
+            const flashInterval = setInterval(() => {
+              finalSlot.classList.toggle('spinning');
+              flashCount++;
+              
+              if (flashCount >= 6) { // 3 full flashes (on/off = 2 counts per flash)
+                clearInterval(flashInterval);
+                finalSlot.classList.add('spinning');
+
+                setTimeout(() => {
+                  finalSlot.classList.remove('spinning');
+                  isSpinning = false;
+                  document.querySelectorAll('.spin-btn').forEach(btn => btn.disabled = false);
+                }, 2000);
+              }
+            }, 300);
+            
+            return;
+          }
+
+          currentSlot = availableSlots[Math.floor(Math.random() * availableSlots.length)];
+          currentSlot.classList.add('spinning');
+          tickCount++;
+
+          const delay = 50 + (progress * 150);
+          setTimeout(tick, delay);
+        }
+
+        tick();
+      }
+
+      function selectSpinResult(slot, categories) {
+        const weaponId = slot.dataset.weapon;
+        const slotKey = slot.dataset.slotKey;
+        
+        console.log('Spin result:', weaponId, 'in slot:', slotKey);
+
+        const category = slot.dataset.category;
+        const availableWeapons = Object.entries(weaponData)
+          .filter(([id, data]) => 
+            data.category === category && 
+            data.factions.includes(currentFaction)
+          );
+        
+        if (availableWeapons.length === 0) return;
+
+        const [randomWeaponId, randomWeaponData] = availableWeapons[Math.floor(Math.random() * availableWeapons.length)];
+
+        if (equippedWeapons.has(weaponId)) {
+          equippedWeapons.delete(weaponId);
+        }
+
+        slot.dataset.weapon = randomWeaponId;
+        slot.querySelector('.icon img').src = randomWeaponData.icon;
+        slot.querySelector('.name').textContent = randomWeaponData.name;
+
+        weaponSlots[currentFaction][slotKey] = randomWeaponId;
+
+        equippedWeapons.add(randomWeaponId);
+        saveData();
+        updateDroppedWeapons();
+      }
+
+      loadSavedData();
+      rebuildWeaponGrid();
+      updateDroppedWeapons();
+    </script>
+  </body>
+</html>
